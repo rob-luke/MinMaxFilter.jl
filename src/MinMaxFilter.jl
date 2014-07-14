@@ -40,25 +40,26 @@ for N = 2:3
                 @nexprs $(N)   j->(sa_{j} = 1:size(maxval_temp)[j] - window + 1)
                 @nexprs $(N-1) j->(sa_{j} = i_j)
 
+                # Filter the last dimension
                 (@nref $N minval_temp sa) = min_filter(vec( @nref $N minval_temp fa), window)
                 (@nref $N maxval_temp sa) = max_filter(vec( @nref $N maxval_temp fa), window)
 
             end
 
-            permuter = mod([1:$N], $N)+1
-
+            # Circular shift the dimensions
             maxval_temp = permutedims(maxval_temp, mod([1:$N], $N)+1)
             minval_temp = permutedims(minval_temp, mod([1:$N], $N)+1)
 
         end
 
+        # The dimensions to extract
         @nexprs $N j->(a_{j} = 1:size(A, j)-window+1)
 
+        # Extract set dimensions
         maxval_out = @nref $N maxval_temp a
         minval_out = @nref $N minval_temp a
 
-    return minval_out, maxval_out
-
+        return minval_out, maxval_out
     end
     end
 end
