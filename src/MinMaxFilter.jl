@@ -24,22 +24,26 @@ function minmax_filter(A::Array{FloatingPoint, 2}, window::Int; verbose::Bool=fa
     if verbose; println("2d filter"); end
 
     maxval_1 = zeros(FloatingPoint, (size(A)[1], size(A)[2]-window+1))
+    minval_1 = zeros(FloatingPoint, (size(A)[1], size(A)[2]-window+1))
 
     for i = 1:size(maxval_1)[1]
 
+        minval_1[i, :], tmp = minmax_filter(vec(A[i, :]), window, verbose=false)
         tmp, maxval_1[i, :] = minmax_filter(vec(A[i, :]), window, verbose=false)
 
     end
 
     maxval_2 = zeros(FloatingPoint, (size(A)[1]-window+1, size(A)[2]-window+1))
+    minval_2 = zeros(FloatingPoint, (size(A)[1]-window+1, size(A)[2]-window+1))
 
     for j = 1:size(maxval_1)[2]
 
+        minval_2[:, j], tmp = minmax_filter(vec(minval_1[:, j]), window, verbose=false)
         tmp, maxval_2[:, j] = minmax_filter(vec(maxval_1[:, j]), window, verbose=false)
 
     end
 
-    return maxval_2
+    return minval_2, maxval_2
 end
 
 
@@ -48,11 +52,13 @@ function minmax_filter(A::Array{FloatingPoint, 3}, window::Int; verbose::Bool=fa
     if verbose; println("3d filter"); end
 
     maxval_temp = zeros(FloatingPoint, size(A))
+    minval_temp = zeros(FloatingPoint, size(A))
 
     temp_length = size(A)[2] - window +1
     for i = 1:size(maxval_temp)[1]
         for k = 1:size(maxval_temp)[3]
 
+            minval_temp[i, 1:temp_length, k], tmp  = minmax_filter(vec(A[i, :, k]), window)
             tmp, maxval_temp[i, 1:temp_length, k]  = minmax_filter(vec(A[i, :, k]), window)
 
         end
@@ -62,6 +68,7 @@ function minmax_filter(A::Array{FloatingPoint, 3}, window::Int; verbose::Bool=fa
     for j = 1:size(maxval_temp)[2]
         for k = 1:size(maxval_temp)[3]
 
+            minval_temp[1:temp_length, j, k], tmp  = minmax_filter(vec(minval_temp[:, j, k]), window)
             tmp, maxval_temp[1:temp_length, j, k]  = minmax_filter(vec(maxval_temp[:, j, k]), window)
 
         end
@@ -71,14 +78,16 @@ function minmax_filter(A::Array{FloatingPoint, 3}, window::Int; verbose::Bool=fa
     for i = 1:size(maxval_temp)[1]
         for j = 1:size(maxval_temp)[2]
 
+            minval_temp[i, j, 1:temp_length], tmp  = minmax_filter(vec(minval_temp[i, j, :]), window)
             tmp, maxval_temp[i, j, 1:temp_length]  = minmax_filter(vec(maxval_temp[i, j, :]), window)
 
         end
     end
 
     maxval_out = maxval_temp[1:size(A)[1] - window + 1, 1:size(A)[2] - window + 1, 1:size(A)[3] - window + 1]
+    minval_out = minval_temp[1:size(A)[1] - window + 1, 1:size(A)[2] - window + 1, 1:size(A)[3] - window + 1]
 
-    return maxval_out
+    return minval_out, maxval_out
 end
 
 
