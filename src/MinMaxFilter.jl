@@ -19,67 +19,54 @@ type Wedge
 end
 
 
+for N = 2:3
+    @eval begin
+    function minmax_filter(A::Array{FloatingPoint, $N}, window::Int; verbose::Bool=true)
 
+        if verbose; println("Min max filter on $(length(size(A))) dimensions"); end
 
-function minmax_filter(A::Array{FloatingPoint, 2}, window::Int; verbose::Bool=false)
+        maxval_temp = copy(A); minval_temp = copy(A)
 
-    if verbose; println("2d filter"); end
+        for dim = 1:$N
 
-    maxval_temp = copy(A)
-    minval_temp = copy(A)
+            # For all but the last dimension
+            @nloops $(N-1) i maxval_temp begin
 
-    for dim = 1:2
-        temp_length = size(maxval_temp)[1] - window +1
-        for j = 1:size(A)[1]
-            minval_temp[1:temp_length, j], tmp = minmax_filter(vec(minval_temp[:, j]), window, verbose=false)
-            tmp, maxval_temp[1:temp_length, j] = minmax_filter(vec(maxval_temp[:, j]), window, verbose=false)
-        end
-        maxval_temp = permutedims(maxval_temp, [2,1])
-        minval_temp = permutedims(minval_temp, [2,1])
-    end
+                # Create index for full array (fa) length
+                @nexprs $(N)   j->(fa_{j} = 1:size(maxval_temp)[j])
+                @nexprs $(N-1) j->(fa_{j} = i_j)
 
-    maxval_out = maxval_temp[1:size(A)[1] - window + 1, 1:size(A)[2] - window + 1]
-    minval_out = minval_temp[1:size(A)[1] - window + 1, 1:size(A)[2] - window + 1]
+                # Create index for short array (sa) length
+                @nexprs $(N)   j->(sa_{j} = 1:size(maxval_temp)[j] - window + 1)
+                @nexprs $(N-1) j->(sa_{j} = i_j)
 
-    return minval_out, maxval_out
-end
-
-
-function minmax_filter(A::Array{FloatingPoint, 3}, window::Int; verbose::Bool=false)
-
-    if verbose; println("3d filter"); end
-
-    maxval_temp = copy(A)
-    minval_temp = copy(A)
-
-    for dim = 1:3
-        temp_length = size(maxval_temp)[1] - window +1
-        for j = 1:size(maxval_temp)[2]
-            for k = 1:size(maxval_temp)[3]
-
-                minval_temp[1:temp_length, j, k], tmp  = minmax_filter(vec(minval_temp[:, j, k]), window)
-                tmp, maxval_temp[1:temp_length, j, k]  = minmax_filter(vec(maxval_temp[:, j, k]), window)
+                (@nref $N minval_temp sa) = min_filter(vec( @nref $N minval_temp fa), window)
+                (@nref $N maxval_temp sa) = max_filter(vec( @nref $N maxval_temp fa), window)
 
             end
-        end
-        maxval_temp = permutedims(maxval_temp, [2,3,1])
-        minval_temp = permutedims(minval_temp, [2,3,1])
-    end
 
-    maxval_out = maxval_temp[1:size(A)[1] - window + 1, 1:size(A)[2] - window + 1, 1:size(A)[3] - window + 1]
-    minval_out = minval_temp[1:size(A)[1] - window + 1, 1:size(A)[2] - window + 1, 1:size(A)[3] - window + 1]
+            permuter = mod([1:$N], $N)+1
+
+            maxval_temp = permutedims(maxval_temp, mod([1:$N], $N)+1)
+            minval_temp = permutedims(minval_temp, mod([1:$N], $N)+1)
+
+        end
+
+        @nexprs $N j->(a_{j} = 1:size(A, j)-window+1)
+
+        maxval_out = @nref $N maxval_temp a
+        minval_out = @nref $N minval_temp a
 
     return minval_out, maxval_out
+
+    end
+    end
 end
-
-
-
-
 
 
 function minmax_filter(a::AbstractArray, window::Int; verbose::Bool=false)
 
-    if verbose; println("Running min max filter on array of length $(length(a))"); end
+    if verbose; println("Running min max filter on array of length $(length(a)) with window length $window"); end
 
     n = length(a)
 
@@ -134,11 +121,11 @@ function minmax_filter(a::AbstractArray, window::Int; verbose::Bool=false)
 
         end  # a>a-1
 
-        if verbose
-            println("---- i=$i")
-            println(L.buffer[mod([L.first+(-1:L.n-2)], L.size)+1])
-            println(U.buffer[mod([U.first+(-1:U.n-2)], U.size)+1])
-        end
+        #=if verbose=#
+            #=println("---- i=$i")=#
+            #=println(L.buffer[mod([L.first+(-1:L.n-2)], L.size)+1])=#
+            #=println(U.buffer[mod([U.first+(-1:U.n-2)], U.size)+1])=#
+        #=end=#
 
     end # for i
 
@@ -157,6 +144,23 @@ function minmax_filter(a::AbstractArray, window::Int; verbose::Bool=false)
 
     return minval, maxval
 end
+
+
+function min_filter(a::AbstractArray, window::Int; verbose::Bool=false)
+
+    minval, maxval = minmax_filter(a, window, verbose=verbose)
+
+    return minval
+end
+
+
+function max_filter(a::AbstractArray, window::Int; verbose::Bool=false)
+
+    minval, maxval = minmax_filter(a, window, verbose=verbose)
+
+    return maxval
+end
+
 
 function wedgeisempty(X::Wedge)
     X.n <= 0
@@ -195,20 +199,5 @@ end
 end # module
 
 
-#=for N = 2:3=#
-    #=@eval begin=#
-    #=function minmax_filter_test(A::Array{FloatingPoint, $N}, window::Int; verbose::Bool=true)=#
-
-        #=if verbose=#
-            #=println("Min max filter on $(length(size(A))) dimensions")=#
-        #=end=#
 
 
-        #=@nloops $(N-1) i A begin=#
-            #=println("Processing dimension $(@nref $(N-1) A i)")=#
-        #=end=#
-
-        #=return 1, 1=#
-    #=end=#
-    #=end=#
-#=end=#
