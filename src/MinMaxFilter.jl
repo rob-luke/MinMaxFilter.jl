@@ -53,12 +53,12 @@ function minmax_filter(A::Array{FloatingPoint, 3}, window::Int; verbose::Bool=fa
     minval_temp = copy(A)
 
     for dim = 1:3
-        temp_length = size(maxval_temp)[3] - window +1
-        for i = 1:size(maxval_temp)[1]
-            for j = 1:size(maxval_temp)[2]
+        temp_length = size(maxval_temp)[1] - window +1
+        for j = 1:size(maxval_temp)[2]
+            for k = 1:size(maxval_temp)[3]
 
-                minval_temp[i, j, 1:temp_length], tmp  = minmax_filter(vec(minval_temp[i, j, :]), window)
-                tmp, maxval_temp[i, j, 1:temp_length]  = minmax_filter(vec(maxval_temp[i, j, :]), window)
+                minval_temp[1:temp_length, j, k], tmp  = minmax_filter(vec(minval_temp[:, j, k]), window)
+                tmp, maxval_temp[1:temp_length, j, k]  = minmax_filter(vec(maxval_temp[:, j, k]), window)
 
             end
         end
