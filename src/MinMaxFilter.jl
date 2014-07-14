@@ -7,6 +7,8 @@ module MinMaxFilter
 
 export minmax_filter
 
+using Base.Cartesian
+
 type Wedge
     buffer::AbstractArray
     size::Int
@@ -15,6 +17,70 @@ type Wedge
     last::Int
     mxn::Int
 end
+
+
+function minmax_filter(A::Array{FloatingPoint, 2}, window::Int; verbose::Bool=false)
+
+    if verbose; println("2d filter"); end
+
+    maxval_1 = zeros(FloatingPoint, (size(A)[1], size(A)[2]-window+1))
+
+    for i = 1:size(maxval_1)[1]
+
+        tmp, maxval_1[i, :] = minmax_filter(vec(A[i, :]), window, verbose=false)
+
+    end
+
+    maxval_2 = zeros(FloatingPoint, (size(A)[1]-window+1, size(A)[2]-window+1))
+
+    for j = 1:size(maxval_1)[2]
+
+        tmp, maxval_2[:, j] = minmax_filter(vec(maxval_1[:, j]), window, verbose=false)
+
+    end
+
+    return maxval_2
+end
+
+
+function minmax_filter(A::Array{FloatingPoint, 3}, window::Int; verbose::Bool=false)
+
+    if verbose; println("3d filter"); end
+
+    maxval_temp = zeros(FloatingPoint, size(A))
+
+    temp_length = size(A)[2] - window +1
+    for i = 1:size(maxval_temp)[1]
+        for k = 1:size(maxval_temp)[3]
+
+            tmp, maxval_temp[i, 1:temp_length, k]  = minmax_filter(vec(A[i, :, k]), window)
+
+        end
+    end
+
+    temp_length = size(A)[1] - window +1
+    for j = 1:size(maxval_temp)[2]
+        for k = 1:size(maxval_temp)[3]
+
+            tmp, maxval_temp[1:temp_length, j, k]  = minmax_filter(vec(maxval_temp[:, j, k]), window)
+
+        end
+    end
+
+    temp_length = size(A)[3] - window +1
+    for i = 1:size(maxval_temp)[1]
+        for j = 1:size(maxval_temp)[2]
+
+            tmp, maxval_temp[i, j, 1:temp_length]  = minmax_filter(vec(maxval_temp[i, j, :]), window)
+
+        end
+    end
+
+    maxval_out = maxval_temp[1:size(A)[1] - window + 1, 1:size(A)[2] - window + 1, 1:size(A)[3] - window + 1]
+
+    return maxval_out
+end
+
 
 function minmax_filter(a::AbstractArray, window::Int; verbose::Bool=false)
 
@@ -135,3 +201,18 @@ end # module
 
 
 
+
+#=for N = 1:3=#
+    #=@eval begin=#
+    #=function minmax_filter(A::Array{FloatingPoint, $N}, window::Int; verbose::Bool=true)=#
+
+        #=println("Min max filter on $(length(size(A))) dimensions")=#
+
+        #=@nloops $(N-1) i A begin=#
+            #=println("Processing dimension $(@nref $N A i)")=#
+        #=end=#
+
+        #=return 1, 1=#
+    #=end=#
+    #=end=#
+#=end=#
