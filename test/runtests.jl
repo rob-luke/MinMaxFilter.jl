@@ -46,7 +46,7 @@ max_matlab = read(filen, "smax")
 max_matlab = convert(Array{FloatingPoint}, max_matlab)
 close(filen)
 
-maxval = minmax_filter(A, 11, verbose=false)
+maxval = minmax_filter(A, 11, verbose=true)
 
 @test_approx_eq maxval max_matlab
 
@@ -72,7 +72,7 @@ max_matlab = read(filen, "amax")
 max_matlab = convert(Array{FloatingPoint}, max_matlab)
 close(filen)
 
-maxval = minmax_filter(A, 5, verbose=false)
+maxval = minmax_filter(A, 5, verbose=true)
 
 @test_approx_eq maxval max_matlab
 
