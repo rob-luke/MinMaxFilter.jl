@@ -19,6 +19,8 @@ type Wedge
 end
 
 
+
+
 function minmax_filter(A::Array{FloatingPoint, 2}, window::Int; verbose::Bool=false)
 
     if verbose; println("2d filter"); end
@@ -27,7 +29,7 @@ function minmax_filter(A::Array{FloatingPoint, 2}, window::Int; verbose::Bool=fa
     minval_temp = copy(A)
 
     for dim = 1:2
-        temp_length = size(A)[1] - window +1
+        temp_length = size(maxval_temp)[1] - window +1
         for j = 1:size(A)[1]
             minval_temp[1:temp_length, j], tmp = minmax_filter(vec(minval_temp[:, j]), window, verbose=false)
             tmp, maxval_temp[1:temp_length, j] = minmax_filter(vec(maxval_temp[:, j]), window, verbose=false)
@@ -69,6 +71,10 @@ function minmax_filter(A::Array{FloatingPoint, 3}, window::Int; verbose::Bool=fa
 
     return minval_out, maxval_out
 end
+
+
+
+
 
 
 function minmax_filter(a::AbstractArray, window::Int; verbose::Bool=false)
@@ -189,4 +195,20 @@ end
 end # module
 
 
+#=for N = 2:3=#
+    #=@eval begin=#
+    #=function minmax_filter_test(A::Array{FloatingPoint, $N}, window::Int; verbose::Bool=true)=#
 
+        #=if verbose=#
+            #=println("Min max filter on $(length(size(A))) dimensions")=#
+        #=end=#
+
+
+        #=@nloops $(N-1) i A begin=#
+            #=println("Processing dimension $(@nref $(N-1) A i)")=#
+        #=end=#
+
+        #=return 1, 1=#
+    #=end=#
+    #=end=#
+#=end=#
