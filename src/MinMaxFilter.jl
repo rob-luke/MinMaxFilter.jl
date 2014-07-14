@@ -23,19 +23,17 @@ function minmax_filter(A::Array{FloatingPoint, 2}, window::Int; verbose::Bool=fa
 
     if verbose; println("2d filter"); end
 
-    maxval_temp = zeros(FloatingPoint, size(A))
-    minval_temp = zeros(FloatingPoint, size(A))
+    maxval_temp = copy(A)
+    minval_temp = copy(A)
 
-    temp_length = size(A)[1] - window +1
-    for i = 1:size(A)[1]
-        minval_temp[i, 1:temp_length], tmp = minmax_filter(vec(A[i, :]), window, verbose=false)
-        tmp, maxval_temp[i, 1:temp_length] = minmax_filter(vec(A[i, :]), window, verbose=false)
-    end
-
-    temp_length = size(A)[2] - window +1
-    for j = 1:size(A)[2]
-        minval_temp[1:temp_length, j], tmp = minmax_filter(vec(minval_temp[:, j]), window, verbose=false)
-        tmp, maxval_temp[1:temp_length, j] = minmax_filter(vec(maxval_temp[:, j]), window, verbose=false)
+    for dim = 1:2
+        temp_length = size(A)[1] - window +1
+        for j = 1:size(A)[1]
+            minval_temp[1:temp_length, j], tmp = minmax_filter(vec(minval_temp[:, j]), window, verbose=false)
+            tmp, maxval_temp[1:temp_length, j] = minmax_filter(vec(maxval_temp[:, j]), window, verbose=false)
+        end
+        maxval_temp = permutedims(maxval_temp, [2,1])
+        minval_temp = permutedims(minval_temp, [2,1])
     end
 
     maxval_out = maxval_temp[1:size(A)[1] - window + 1, 1:size(A)[2] - window + 1]
@@ -49,37 +47,21 @@ function minmax_filter(A::Array{FloatingPoint, 3}, window::Int; verbose::Bool=fa
 
     if verbose; println("3d filter"); end
 
-    maxval_temp = zeros(FloatingPoint, size(A))
-    minval_temp = zeros(FloatingPoint, size(A))
+    maxval_temp = copy(A)
+    minval_temp = copy(A)
 
-    temp_length = size(A)[2] - window +1
-    for i = 1:size(maxval_temp)[1]
-        for k = 1:size(maxval_temp)[3]
+    for dim = 1:3
+        temp_length = size(maxval_temp)[3] - window +1
+        for i = 1:size(maxval_temp)[1]
+            for j = 1:size(maxval_temp)[2]
 
-            minval_temp[i, 1:temp_length, k], tmp  = minmax_filter(vec(A[i, :, k]), window)
-            tmp, maxval_temp[i, 1:temp_length, k]  = minmax_filter(vec(A[i, :, k]), window)
+                minval_temp[i, j, 1:temp_length], tmp  = minmax_filter(vec(minval_temp[i, j, :]), window)
+                tmp, maxval_temp[i, j, 1:temp_length]  = minmax_filter(vec(maxval_temp[i, j, :]), window)
 
+            end
         end
-    end
-
-    temp_length = size(A)[1] - window +1
-    for j = 1:size(maxval_temp)[2]
-        for k = 1:size(maxval_temp)[3]
-
-            minval_temp[1:temp_length, j, k], tmp  = minmax_filter(vec(minval_temp[:, j, k]), window)
-            tmp, maxval_temp[1:temp_length, j, k]  = minmax_filter(vec(maxval_temp[:, j, k]), window)
-
-        end
-    end
-
-    temp_length = size(A)[3] - window +1
-    for i = 1:size(maxval_temp)[1]
-        for j = 1:size(maxval_temp)[2]
-
-            minval_temp[i, j, 1:temp_length], tmp  = minmax_filter(vec(minval_temp[i, j, :]), window)
-            tmp, maxval_temp[i, j, 1:temp_length]  = minmax_filter(vec(maxval_temp[i, j, :]), window)
-
-        end
+        maxval_temp = permutedims(maxval_temp, [2,3,1])
+        minval_temp = permutedims(minval_temp, [2,3,1])
     end
 
     maxval_out = maxval_temp[1:size(A)[1] - window + 1, 1:size(A)[2] - window + 1, 1:size(A)[3] - window + 1]
@@ -208,18 +190,3 @@ end # module
 
 
 
-
-#=for N = 1:3=#
-    #=@eval begin=#
-    #=function minmax_filter(A::Array{FloatingPoint, $N}, window::Int; verbose::Bool=true)=#
-
-        #=println("Min max filter on $(length(size(A))) dimensions")=#
-
-        #=@nloops $(N-1) i A begin=#
-            #=println("Processing dimension $(@nref $N A i)")=#
-        #=end=#
-
-        #=return 1, 1=#
-    #=end=#
-    #=end=#
-#=end=#
