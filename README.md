@@ -11,6 +11,13 @@ http://arxiv.org/abs/cs.DS/0610046
 http://lemire.me/  
 http://www.mathworks.com/matlabcentral/fileexchange/24705-min-max-filter
 
+## Install
+
+```julia
+Pkg.clone("https://github.com/codles/MinMaxFilter.jl.git")
+
+```
+
 
 ## Example usage
 
