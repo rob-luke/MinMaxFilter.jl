@@ -19,7 +19,7 @@ type Wedge
 end
 
 
-for N = 2:3
+for N = 2:4
     @eval begin
     function minmax_filter(A::Array{FloatingPoint, $N}, window::Int; verbose::Bool=true)
 
