@@ -21,7 +21,7 @@ end
 
 for N = 2:4
     @eval begin
-    function minmax_filter(A::Array{FloatingPoint, $N}, window::Int; verbose::Bool=true)
+    function minmax_filter(A::Array{FloatingPoint, $N}, window::Array{Int, 1}; verbose::Bool=true)
 
         if verbose; println("Min max filter on $(length(size(A))) dimensions"); end
 
@@ -37,12 +37,12 @@ for N = 2:4
                 @nexprs $(N-1) j->(fa_{j} = i_j)
 
                 # Create index for short array (sa) length
-                @nexprs $(N)   j->(sa_{j} = 1:size(maxval_temp)[j] - window + 1)
+                @nexprs $(N)   j->(sa_{j} = 1:size(maxval_temp)[j] - window[dim] + 1)
                 @nexprs $(N-1) j->(sa_{j} = i_j)
 
                 # Filter the last dimension
-                (@nref $N minval_temp sa) = min_filter(vec( @nref $N minval_temp fa), window)
-                (@nref $N maxval_temp sa) = max_filter(vec( @nref $N maxval_temp fa), window)
+                (@nref $N minval_temp sa) = min_filter(vec( @nref $N minval_temp fa), window[dim])
+                (@nref $N maxval_temp sa) = max_filter(vec( @nref $N maxval_temp fa), window[dim])
 
             end
 
@@ -53,7 +53,7 @@ for N = 2:4
         end
 
         # The dimensions to extract
-        @nexprs $N j->(a_{j} = 1:size(A, j)-window+1)
+        @nexprs $N j->(a_{j} = 1:size(A, j)-window[j]+1)
 
         # Extract set dimensions
         maxval_out = @nref $N maxval_temp a
