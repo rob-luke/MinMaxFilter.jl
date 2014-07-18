@@ -51,7 +51,7 @@ min_matlab = read(filen, "smin")
 min_matlab = convert(Array{FloatingPoint}, min_matlab)
 close(filen)
 
-minval, maxval = minmax_filter(A, 11, verbose=true)
+minval, maxval = minmax_filter(A, [11, 11], verbose=true)
 
 @test_approx_eq maxval max_matlab
 @test_approx_eq minval min_matlab
@@ -82,7 +82,7 @@ min_matlab = read(filen, "amin")
 min_matlab = convert(Array{FloatingPoint}, min_matlab)
 close(filen)
 
-minval, maxval = minmax_filter(A, 5, verbose=true)
+minval, maxval = minmax_filter(A, [5,5,5], verbose=true)
 
 @test_approx_eq maxval max_matlab
 @test_approx_eq minval min_matlab
