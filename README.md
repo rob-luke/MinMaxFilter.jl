@@ -1,6 +1,7 @@
 # MinMaxFilter
 
 [![Build Status](https://travis-ci.org/codles/MinMaxFilter.jl.svg?branch=master)](https://travis-ci.org/codles/MinMaxFilter.jl)
+[![Build status](https://ci.appveyor.com/api/projects/status/8lb7ekeqvcqx80vm/branch/master?svg=true)](https://ci.appveyor.com/project/codles/minmaxfilter-jl/branch/master)
 [![Coverage Status](https://coveralls.io/repos/codles/MinMaxFilter.jl/badge.png?branch=master)](https://coveralls.io/r/codles/MinMaxFilter.jl?branch=master)
 
 
