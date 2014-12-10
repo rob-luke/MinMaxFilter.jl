@@ -21,7 +21,7 @@ end
 
 for N = 2:4
     @eval begin
-    function minmax_filter(A::Array{FloatingPoint, $N}, window::Array{Int, 1}; verbose::Bool=true)
+    function minmax_filter{T <: Number}(A::Array{T, $N}, window::Array{Int, 1}; verbose::Bool=true)
 
         if verbose; println("Min max filter on $(length(size(A))) dimensions"); end
 
@@ -65,7 +65,7 @@ for N = 2:4
 end
 
 
-function minmax_filter(a::AbstractArray, window::Int; verbose::Bool=false)
+function minmax_filter{T <: Number}(a::AbstractArray{T}, window::Int; verbose::Bool=false)
 
     if verbose; println("Running min max filter on array of length $(length(a)) with window length $window"); end
 
@@ -73,8 +73,8 @@ function minmax_filter(a::AbstractArray, window::Int; verbose::Bool=false)
 
     # Initialise the output variables
     # This is the running minimum and maximum over the specified window length
-    minval = zeros(FloatingPoint, 1, n-window+1)  # TODO: can you initialise as empty or nans?
-    maxval = zeros(FloatingPoint, 1, n-window+1)
+    minval = zeros(T, 1, n-window+1)
+    maxval = zeros(T, 1, n-window+1)
 
     # Initialise the internal wedges
     # U[1], L[1] are the location of the global maximum and minimum
