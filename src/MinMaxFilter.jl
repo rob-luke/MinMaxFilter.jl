@@ -79,8 +79,8 @@ function minmax_filter{T <: Number}(a::AbstractArray{T}, window::Int; verbose::B
     # Initialise the internal wedges
     # U[1], L[1] are the location of the global maximum and minimum
     # U[2], L[2] are the maximum and minimum over (U1, inf)
-    L = Wedge(zeros(1,window+1), window+1, 0, 1, 0, 0)          # Min
-    U = Wedge(zeros(1,window+1), window+1, 0, 1, 0, 0)
+    L = Wedge(zeros(Int,1,window+1), window+1, 0, 1, 0, 0)          # Min
+    U = Wedge(zeros(Int,1,window+1), window+1, 0, 1, 0, 0)
 
     for i = 2:n
         if i > window
