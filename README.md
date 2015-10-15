@@ -6,6 +6,8 @@
 
 ## Overview
 
+The filter computes the minima and/or maxima of an array over sliding window with a given size.
+
 This is a port of the Lemire min max filter as implemented by Bruno Luong.  
 http://arxiv.org/abs/cs.DS/0610046  
 http://lemire.me/  
