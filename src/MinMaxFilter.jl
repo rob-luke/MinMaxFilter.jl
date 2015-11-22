@@ -95,7 +95,7 @@ function minmax_filter{T <: Number}(a::AbstractArray{T}, window::Int)
         end # window
 
         if a[i] > a[i-1]
-            L = pushback(L, i-1)
+            pushback!(L, i-1)
             if i==window+getfirst(L); L=popfront(L); end
             while !wedgeisempty(U)
                 if a[i] <= a[getlast(U)]
@@ -107,7 +107,7 @@ function minmax_filter{T <: Number}(a::AbstractArray{T}, window::Int)
 
         else
 
-            U = pushback(U, i-1)
+            pushback!(U, i-1)
             if i==window+getfirst(U); U=popfront(U); end
 
             while !wedgeisempty(L)
@@ -159,12 +159,11 @@ function wedgeisempty(X::Wedge)
     X.n <= 0
 end
 
-function pushback(X::Wedge, v)
+function pushback!(X::Wedge, v)
     X.last = mod(X.last, X.size) + 1
     X.buffer[X.last] = v
     X.n = X.n+1
     X.mxn = max(X.mxn, X.n)
-    return X
 end
 
 function getfirst(X::Wedge)
