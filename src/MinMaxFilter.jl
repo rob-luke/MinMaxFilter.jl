@@ -9,8 +9,8 @@ export minmax_filter
 
 using Base.Cartesian
 
-type Wedge
-    buffer::AbstractArray
+type Wedge{A <: AbstractArray}
+    buffer::A
     size::Int
     n::Int
     first::Int
