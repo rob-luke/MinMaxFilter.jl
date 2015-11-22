@@ -161,7 +161,7 @@ function pushback(X::Wedge, v)
     X.last = mod(X.last, X.size) + 1
     X.buffer[X.last] = v
     X.n = X.n+1
-    X.mxn = maximum([X.mxn, X.n])
+    X.mxn = max(X.mxn, X.n)
     return X
 end
 
