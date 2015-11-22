@@ -1,3 +1,5 @@
+__precompile__(true)
+
 module MinMaxFilter
 
 # This is a port of the Lemire min max filter as implemented by Bruno Luong
