@@ -21,9 +21,7 @@ end
 
 for N = 2:4
     @eval begin
-    function minmax_filter{T <: Number}(A::Array{T, $N}, window::Array{Int, 1}; verbose::Bool=true)
-
-        if verbose; println("Min max filter on $(length(size(A))) dimensions"); end
+    function minmax_filter{T <: Number}(A::Array{T, $N}, window::Array{Int, 1})
 
         maxval_temp = copy(A); minval_temp = copy(A)
 
@@ -65,9 +63,7 @@ for N = 2:4
 end
 
 
-function minmax_filter{T <: Number}(a::AbstractArray{T}, window::Int; verbose::Bool=false)
-
-    if verbose; println("Running min max filter on array of length $(length(a)) with window length $window"); end
+function minmax_filter{T <: Number}(a::AbstractArray{T}, window::Int)
 
     n = length(a)
 
@@ -122,12 +118,6 @@ function minmax_filter{T <: Number}(a::AbstractArray{T}, window::Int; verbose::B
 
         end  # a>a-1
 
-        #=if verbose=#
-            #=println("---- i=$i")=#
-            #=println(L.buffer[mod([L.first+(-1:L.n-2)], L.size)+1])=#
-            #=println(U.buffer[mod([U.first+(-1:U.n-2)], U.size)+1])=#
-        #=end=#
-
     end # for i
 
     i = n+1
@@ -147,17 +137,17 @@ function minmax_filter{T <: Number}(a::AbstractArray{T}, window::Int; verbose::B
 end
 
 
-function min_filter(a::AbstractArray, window::Int; verbose::Bool=false)
+function min_filter(a::AbstractArray, window::Int)
 
-    minval, maxval = minmax_filter(a, window, verbose=verbose)
+    minval, maxval = minmax_filter(a, window)
 
     return minval
 end
 
 
-function max_filter(a::AbstractArray, window::Int; verbose::Bool=false)
+function max_filter(a::AbstractArray, window::Int)
 
-    minval, maxval = minmax_filter(a, window, verbose=verbose)
+    minval, maxval = minmax_filter(a, window)
 
     return maxval
 end

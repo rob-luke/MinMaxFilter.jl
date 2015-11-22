@@ -19,7 +19,7 @@ matlab = readdlm(joinpath(dirname(@__FILE__), "data", "minmax_output.txt"),'\t')
 
 t = (1:1024)./1024
 d = sin(2*pi*4*t)
-minval, maxval = minmax_filter(d, 100, verbose=true)
+minval, maxval = minmax_filter(d, 100)
 
 @test_approx_eq minval matlab[1,:]
 @test_approx_eq maxval matlab[2,:]
@@ -51,7 +51,7 @@ min_matlab = read(filen, "smin")
 min_matlab = convert(Array{AbstractFloat}, min_matlab)
 close(filen)
 
-minval, maxval = minmax_filter(A, [11, 11], verbose=true)
+minval, maxval = minmax_filter(A, [11, 11])
 
 @test_approx_eq maxval max_matlab
 @test_approx_eq minval min_matlab
@@ -82,7 +82,7 @@ min_matlab = read(filen, "amin")
 min_matlab = convert(Array{AbstractFloat}, min_matlab)
 close(filen)
 
-minval, maxval = minmax_filter(A, [5,5,5], verbose=true)
+minval, maxval = minmax_filter(A, [5,5,5])
 
 @test_approx_eq maxval max_matlab
 @test_approx_eq minval min_matlab

@@ -13,7 +13,7 @@ A = read(filen, "Z")
 A = convert(Array{FloatingPoint}, A)
 close(filen)
 
-minval, maxval = minmax_filter(A, 11, verbose=false)
+minval, maxval = minmax_filter(A, 11)
 
 matching = A[2:size(maxval)[1]+1, 2:size(maxval)[2]+1]
 matching = matching .== maxval
@@ -42,7 +42,7 @@ close(filen)
 
 p = plot_dat(A)
 
-minval, maxval = minmax_filter(A, 6, verbose=false)
+minval, maxval = minmax_filter(A, 6)
 
 matching = A[2:size(maxval)[1]+1, 2:size(maxval)[2]+1, 2:size(maxval)[3]+1]
 matching = matching .== maxval
