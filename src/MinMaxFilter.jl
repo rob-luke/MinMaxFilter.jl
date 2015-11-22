@@ -47,8 +47,8 @@ for N = 2:4
             end
 
             # Circular shift the dimensions
-            maxval_temp = permutedims(maxval_temp, mod([1:$N], $N)+1)
-            minval_temp = permutedims(minval_temp, mod([1:$N], $N)+1)
+            maxval_temp = permutedims(maxval_temp, mod(collect(1:$N), $N)+1)
+            minval_temp = permutedims(minval_temp, mod(collect(1:$N), $N)+1)
 
         end
 

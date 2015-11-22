@@ -38,17 +38,17 @@ minval, maxval = minmax_filter(d, 100, verbose=true)
 
 filen = matopen(joinpath(dirname(@__FILE__), "data", "2d_array.mat"))
 A = read(filen, "Z")
-A = convert(Array{FloatingPoint}, A)
+A = convert(Array{AbstractFloat}, A)
 close(filen)
 
 filen = matopen(joinpath(dirname(@__FILE__), "data", "2d_array_max11.mat"))
 max_matlab = read(filen, "smax")
-max_matlab = convert(Array{FloatingPoint}, max_matlab)
+max_matlab = convert(Array{AbstractFloat}, max_matlab)
 close(filen)
 
 filen = matopen(joinpath(dirname(@__FILE__), "data", "2d_array_min11.mat"))
 min_matlab = read(filen, "smin")
-min_matlab = convert(Array{FloatingPoint}, min_matlab)
+min_matlab = convert(Array{AbstractFloat}, min_matlab)
 close(filen)
 
 minval, maxval = minmax_filter(A, [11, 11], verbose=true)
@@ -69,17 +69,17 @@ minval, maxval = minmax_filter(A, [11, 11], verbose=true)
 
 filen = matopen(joinpath(dirname(@__FILE__), "data", "3d_array.mat"))
 A = read(filen, "image")
-A = convert(Array{FloatingPoint}, A)
+A = convert(Array{AbstractFloat}, A)
 close(filen)
 
 filen = matopen(joinpath(dirname(@__FILE__), "data", "3d_array_max5.mat"))
 max_matlab = read(filen, "amax")
-max_matlab = convert(Array{FloatingPoint}, max_matlab)
+max_matlab = convert(Array{AbstractFloat}, max_matlab)
 close(filen)
 
 filen = matopen(joinpath(dirname(@__FILE__), "data", "3d_array_min5.mat"))
 min_matlab = read(filen, "amin")
-min_matlab = convert(Array{FloatingPoint}, min_matlab)
+min_matlab = convert(Array{AbstractFloat}, min_matlab)
 close(filen)
 
 minval, maxval = minmax_filter(A, [5,5,5], verbose=true)
