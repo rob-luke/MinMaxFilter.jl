@@ -80,12 +80,12 @@ function minmax_filter{T <: Number}(a::AbstractArray{T}, window::Int)
 
     for i = 2:n
         if i > window
-            if ~wedgeisempty(U)
+            if !wedgeisempty(U)
                 maxval[i-window] = a[getfirst(U)]
             else
                 maxval[i-window] = a[i-1]
             end
-            if ~wedgeisempty(L)
+            if !wedgeisempty(L)
                 minval[i-window] = a[getfirst(L)]
             else
                 minval[i-window] = a[i-1]
@@ -95,7 +95,7 @@ function minmax_filter{T <: Number}(a::AbstractArray{T}, window::Int)
         if a[i] > a[i-1]
             L = pushback(L, i-1)
             if i==window+getfirst(L); L=popfront(L); end
-            while ~wedgeisempty(U)
+            while !wedgeisempty(U)
                 if a[i] <= a[getlast(U)]
                     if i == window+getfirst(U); U = popfront(U); end
                     break
@@ -108,7 +108,7 @@ function minmax_filter{T <: Number}(a::AbstractArray{T}, window::Int)
             U = pushback(U, i-1)
             if i==window+getfirst(U); U=popfront(U); end
 
-            while ~wedgeisempty(L)
+            while !wedgeisempty(L)
                 if a[i] >= a[getlast(L)]
                     if i == window+getfirst(L); L = popfront(L); end
                     break
@@ -121,13 +121,13 @@ function minmax_filter{T <: Number}(a::AbstractArray{T}, window::Int)
     end # for i
 
     i = n+1
-    if ~wedgeisempty(U)
+    if !wedgeisempty(U)
         maxval[i-window] = a[getfirst(U)]
     else
         maxval[i-window] = a[i-1]
     end
 
-    if ~wedgeisempty(L)
+    if !wedgeisempty(L)
         minval[i-window] = a[getfirst(L)]
     else
         minval[i-window] = a[i-1]
