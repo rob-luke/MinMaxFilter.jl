@@ -160,7 +160,10 @@ function wedgeisempty(X::Wedge)
 end
 
 function pushback!(X::Wedge, v)
-    X.last = mod(X.last, X.size) + 1
+    X.last += 1
+    if X.last > X.size
+        X.last = 1
+    end
     X.buffer[X.last] = v
     X.n = X.n+1
     X.mxn = max(X.mxn, X.n)
