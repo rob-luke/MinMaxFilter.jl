@@ -4,6 +4,11 @@
 [![Coverage Status](https://coveralls.io/repos/codles/MinMaxFilter.jl/badge.png?branch=master)](https://coveralls.io/r/codles/MinMaxFilter.jl?branch=master)
 
 
+# This code has been merged in to [Images.jl](https://github.com/timholy/Images.jl) 
+
+It only remains here for historical reasons. Please use Images.jl
+
+
 ## Overview
 
 The filter computes the minima and/or maxima of an array over sliding window with a given size.
